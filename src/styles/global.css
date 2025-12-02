@@ -1,0 +1,191 @@
+/* src/styles/global.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Prevent flash of wrong background color on page load */
+html {
+  background-color: #F5F7FA;
+}
+
+html.dark {
+  background-color: #0D1117;
+}
+
+html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix for browser autofill background color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.65) inset !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(22, 27, 34, 0.85) inset !important;
+  -webkit-text-fill-color: #f3f4f6 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #E5E7EB;
+}
+::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #1F242D;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #4B5563;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.dark .glass {
+  background: rgba(22, 27, 34, 0.55);
+  border-color: #2A2F36;
+}
+
+/* LIGHT MODE VARIABLES */
+@layer base {
+  :root {
+    --background: 245 247 250; /* #F5F7FA */
+    --foreground: 26 26 26;    /* #1A1A1A */
+
+    --card: 255 255 255;
+    --card-foreground: 26 26 26;
+
+    --primary: 37 99 235;        /* #2563EB */
+    --primary-foreground: 255 255 255;
+
+    --secondary: 243 244 246;    /* #F3F4F6 */
+    --secondary-foreground: 55 65 81;
+
+    --accent: 99 102 241;        /* #6366F1 */
+    --accent-foreground: 255 255 255;
+
+    --muted: 229 231 235;
+    --muted-foreground: 107 114 128;
+
+    --border: 229 231 235;
+    --input: 229 231 235;
+    --ring: 37 99 235;
+  }
+
+  /* DARK MODE VARIABLES */
+  .dark {
+    --background: 13 17 23;        /* #0D1117 */
+    --foreground: 243 244 246;     /* #F3F4F6 */
+
+    --card: 22 27 34;              /* #161B22 */
+    --card-foreground: 243 244 246;
+
+    --primary: 59 130 246;         /* #3B82F6 */
+    --primary-foreground: 13 17 23;
+
+    --secondary: 31 41 55;
+    --secondary-foreground: 209 213 219;
+
+    --accent: 129 140 248;         /* #818CF8 */
+    --accent-foreground: 13 17 23;
+
+    --muted: 55 65 81;
+    --muted-foreground: 156 163 175;
+
+    --border: 42 47 54;
+    --input: 42 47 54;
+    --ring: 59 130 246;
+  }
+}
+
+/* Additional utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
+
+/* Custom animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
