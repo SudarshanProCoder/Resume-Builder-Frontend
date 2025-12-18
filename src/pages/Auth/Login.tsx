@@ -21,17 +21,15 @@ const Login: React.FC = () => {
     {}
   );
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/resume/templates");
+      navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -63,7 +61,7 @@ const Login: React.FC = () => {
 
     try {
       await login(formData.email, formData.password);
-      navigate("/resume/templates");
+      navigate("/dashboard");
     } catch (error) {
       setErrors({ email: "Invalid email or password" });
     }

@@ -1,73 +1,40 @@
-// src/hooks/useAuth.ts
-import { useState, useEffect } from 'react';
-import { authService } from '../services/authService';
-import { getToken, setToken, removeToken } from '../utils/storage';
-
-interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-  profilePic: File | null;
-}
+import { useState } from "react";
+import { authService } from "../services/authService";
+import {
+  getToken,
+  setToken,
+  removeToken,
+  setUser,
+  getUser,
+} from "../utils/storage";
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    // Check if user is already logged in on mount
-    const token = getToken();
-    if (token) {
-      setIsAuthenticated(true);
-      // Optionally fetch user data here
-      fetchUserData();
-    }
-  }, []);
-
-  const fetchUserData = async () => {
-    try {
-      const userData = await authService.getCurrentUser();
-      setUser(userData);
-    } catch (error) {
-      console.error('Failed to fetch user data:', error);
-      removeToken();
-      setIsAuthenticated(false);
-    }
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(!!getToken());
+  const [user, setAuthUser] = useState(getUser());
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
       const response = await authService.login({ email, password });
-      setToken(response.token);
-      setUser(response.user);
-      setIsAuthenticated(true);
-      return response;
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const register = async (data: RegisterData) => {
-    setIsLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append('name', data.name);
-      formData.append('email', data.email);
-      formData.append('password', data.password);
-      if (data.profilePic) {
-        formData.append('profilePic', data.profilePic);
+      if (!response.verificationToken) {
+        throw new Error("Token not received");
       }
 
-      const response = await authService.register(formData);
-      return response;
-    } catch (error) {
-      console.error('Registration failed:', error);
-      throw error;
+      setToken(response.verificationToken);
+
+      const userData = {
+        id: response._id,
+        name: response.name,
+        email: response.email,
+        profileImageUrl: response.profileImageUrl,
+        subscriptionPlan: response.subscriptionPlan,
+      };
+
+      setUser(userData);
+      setAuthUser(userData);
+      setIsAuthenticated(true);
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +43,35 @@ export const useAuth = () => {
   const logout = () => {
     removeToken();
     setIsAuthenticated(false);
-    setUser(null);
+    setAuthUser(null);
+
+    window.location.href = "/login";
+  };
+
+  const register = async (data: {
+    name: string;
+    email: string;
+    password: string;
+    profilePic?: File | null;
+  }) => {
+    setIsLoading(true);
+    try {
+      let profileImageUrl: string | undefined;
+
+      if (data.profilePic) {
+        const uploadRes = await authService.uploadProfileImage(data.profilePic);
+        profileImageUrl = uploadRes.imageUrl;
+      }
+
+      await authService.register({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        profileImageUrl,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -84,7 +79,7 @@ export const useAuth = () => {
     isLoading,
     user,
     login,
-    register,
     logout,
+    register,
   };
 };

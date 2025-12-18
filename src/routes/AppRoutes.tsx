@@ -1,13 +1,14 @@
 // src/routes/AppRoutes.tsx
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-// import { ProtectedRoute } from './ProtectedRoute';
+import { ProtectedRoute } from "./ProtectedRoute";
 
 // Auth Pages
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import NotFound from "@/pages/NotFound";
 import { Loader } from "../components/Loader/Loader";
+import Dashboard from "@/pages/Dashboard/Dashboard";
 // import ForgotPassword from '../pages/Auth/ForgotPassword';
 
 // Resume Pages (create these later)
@@ -33,6 +34,14 @@ export const AppRoutes: React.FC = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
 
         {/* Protected Routes */}
