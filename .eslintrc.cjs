@@ -1,33 +1,33 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es2021: true
   },
   extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:prettier/recommended",
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended'
   ],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
-  plugins: ["react", "prettier"],
+  plugins: ['react', 'prettier'],
   rules: {
-    "no-warning-comments": [
-      "error",
-      { terms: ["todo", "fixme"], location: "anywhere" },
+    'no-warning-comments': [
+      'error',
+      { terms: ['todo', 'fixme'], location: 'anywhere' }
     ],
-    "spaced-comment": ["error", "never"],
+    'spaced-comment': ['error', 'never'],
 
-    "no-inline-comments": "error",
-    "no-multi-str": "off",
+    'no-inline-comments': 'error',
+    'no-multi-str': 'off',
 
-    "prettier/prettier": "error",
+    'prettier/prettier': 'error'
   },
   settings: {
     react: {
-      version: "detect",
-    },
-  },
+      version: 'detect'
+    }
+  }
 };
