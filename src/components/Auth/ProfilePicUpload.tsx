@@ -1,4 +1,3 @@
-// src/components/Auth/ProfilePicUpload.tsx
 import React, { useRef } from 'react';
 import { User, Camera } from 'lucide-react';
 
@@ -9,19 +8,17 @@ interface ProfilePicUploadProps {
 
 export const ProfilePicUpload: React.FC<ProfilePicUploadProps> = ({
   previewUrl,
-  onChange,
+  onChange
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
         return;

@@ -1,9 +1,12 @@
-import {AppRoutes} from './routes/AppRoutes';
+import { SnackbarProvider } from './components/Snackbar/SnackbarProvider';
+import { AppRoutes } from './routes/AppRoutes';
 
 function App() {
   return (
     <div className="App">
-      <AppRoutes />
+      <SnackbarProvider>
+        <AppRoutes />
+      </SnackbarProvider>
     </div>
   );
 }

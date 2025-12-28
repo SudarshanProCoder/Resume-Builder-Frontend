@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "../../components/Input/Input";
-import { Button } from "../../components/Button/Button";
-import { AuthLayout } from "../../components/Auth/AuthLayout";
-import { ProfilePicUpload } from "../../components/Auth/ProfilePicUpload";
-import { useAuth } from "../../hooks/useAuth";
-import { validateEmail } from "../../utils/validators";
+import React, { useState } from 'react';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Input } from '../../components/Input/Input';
+import { Button } from '../../components/Button/Button';
+import { AuthLayout } from '../../components/Auth/AuthLayout';
+import { ProfilePicUpload } from '../../components/Auth/ProfilePicUpload';
+import { useAuth } from '../../hooks/useAuth';
+import { validateEmail } from '../../utils/validators';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { register, isLoading } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    profilePic: null as File | null,
+    name: '',
+    email: '',
+    password: '',
+    profilePic: null as File | null
   });
   const [showPassword, setShowPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -24,7 +24,9 @@ const Register: React.FC = () => {
     name?: string;
     email?: string;
     password?: string;
+    general?: string;
   }>({});
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,19 +50,19 @@ const Register: React.FC = () => {
     const newErrors: { name?: string; email?: string; password?: string } = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = 'Name is required';
     }
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = 'Invalid email format';
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
@@ -77,18 +79,41 @@ const Register: React.FC = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        profilePic: formData.profilePic,
+        profilePic: formData.profilePic
       });
-      navigate("/login");
-    } catch (error) {
-      setErrors({ email: "Registration failed. Please try again." });
+
+      setShowSuccessMessage(true);
+
+      setTimeout(() => {
+        navigate('/verification-pending', {
+          state: { email: formData.email }
+        });
+      }, 2000);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        'Registration failed. Please try again.';
+      setErrors({ general: errorMessage });
     }
   };
 
   return (
     <AuthLayout title="Create Account" subtitle="Join us and start creating">
-      <div onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <ProfilePicUpload previewUrl={previewUrl} onChange={handleFileChange} />
+
+        {errors.general && (
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+            {errors.general}
+          </div>
+        )}
+
+        {showSuccessMessage && (
+          <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-600 dark:text-green-400 text-sm">
+            Registration successful! Please check your email for verification
+            link.
+          </div>
+        )}
 
         <Input
           type="text"
@@ -113,7 +138,7 @@ const Register: React.FC = () => {
         />
 
         <Input
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           name="password"
           placeholder="Password"
           value={formData.password}
@@ -127,7 +152,6 @@ const Register: React.FC = () => {
 
         <Button
           type="submit"
-          onClick={handleSubmit}
           isLoading={isLoading}
           icon={ArrowRight}
           className="w-full"
@@ -138,16 +162,17 @@ const Register: React.FC = () => {
         <div className="text-center pt-4">
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate('/login')}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+            disabled={isLoading}
           >
-            Already have an account?{" "}
+            Already have an account?{' '}
             <span className="text-blue-600 dark:text-indigo-400 font-semibold hover:underline">
               Sign In
             </span>
           </button>
         </div>
-      </div>
+      </form>
     </AuthLayout>
   );
 };
