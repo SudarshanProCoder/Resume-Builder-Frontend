@@ -1,29 +1,30 @@
-// src/pages/Auth/Login.tsx
-import React, { useState, useEffect } from "react";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "../../components/Input/Input";
-import { Button } from "../../components/Button/Button";
-import { AuthLayout } from "../../components/Auth/AuthLayout";
-import { useAuth } from "../../hooks/useAuth";
-import { validateEmail } from "../../utils/validators";
+import React, { useState, useEffect } from 'react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Input } from '../../components/Input/Input';
+import { Button } from '../../components/Button/Button';
+import { AuthLayout } from '../../components/Auth/AuthLayout';
+import { useAuth } from '../../hooks/useAuth';
+import { validateEmail } from '../../utils/validators';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, login, isLoading } = useAuth();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
-  );
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
@@ -39,15 +40,15 @@ const Login: React.FC = () => {
     const newErrors: { email?: string; password?: string } = {};
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = 'Invalid email format';
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
@@ -61,9 +62,17 @@ const Login: React.FC = () => {
 
     try {
       await login(formData.email, formData.password);
-      navigate("/dashboard");
-    } catch (error) {
-      setErrors({ email: "Invalid email or password" });
+      navigate('/dashboard');
+    } catch (error: any) {
+      if (error.message === 'EMAIL_NOT_VERIFIED') {
+        navigate('/verification-pending', {
+          state: { email: formData.email }
+        });
+      } else {
+        const errorMessage =
+          error.response?.data?.message || 'Invalid email or password';
+        setErrors({ general: errorMessage });
+      }
     }
   };
 
@@ -72,7 +81,13 @@ const Login: React.FC = () => {
       title="Welcome Back"
       subtitle="Sign in to continue your journey"
     >
-      <div onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {errors.general && (
+          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+            {errors.general}
+          </div>
+        )}
+
         <Input
           type="email"
           name="email"
@@ -85,7 +100,7 @@ const Login: React.FC = () => {
         />
 
         <Input
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           name="password"
           placeholder="Password"
           value={formData.password}
@@ -99,7 +114,6 @@ const Login: React.FC = () => {
 
         <Button
           type="submit"
-          onClick={handleSubmit}
           isLoading={isLoading}
           icon={ArrowRight}
           className="w-full"
@@ -110,10 +124,11 @@ const Login: React.FC = () => {
         <div className="text-center pt-4">
           <button
             type="button"
-            onClick={() => navigate("/register")}
+            onClick={() => navigate('/register')}
             className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors text-sm"
+            disabled={isLoading}
           >
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <span className="text-blue-600 dark:text-indigo-400 font-semibold hover:underline">
               Sign Up
             </span>
@@ -123,13 +138,14 @@ const Login: React.FC = () => {
         <div className="text-center">
           <button
             type="button"
-            onClick={() => navigate("/forgot-password")}
+            onClick={() => navigate('/forgot-password')}
             className="text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-indigo-400 transition-colors text-sm"
+            disabled={isLoading}
           >
             Forgot Password?
           </button>
         </div>
-      </div>
+      </form>
     </AuthLayout>
   );
 };

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FiSun,
   FiMoon,
@@ -18,41 +18,60 @@ import {
   FiStar,
   FiZap,
   FiUser,
-  FiLogOut,
-  FiCamera,
-  FiMail,
-  FiCreditCard,
-  FiX,
-} from "react-icons/fi";
-import { useAuth } from "@/hooks/useAuth";
+  FiLogOut
+} from 'react-icons/fi';
+import { useAuth } from '@/hooks/useAuth';
+import Profile from './Profile';
+import { authService } from '@/services/authService';
+import { resumeService } from '@/services/resumeService';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [creatingResume, setCreatingResume] = useState(false);
   const { logout } = useAuth();
 
-  const [user, setUser] = useState({
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    avatar: null as string | null,
-    plan: "Pro",
-    joinedDate: "Jan 2024",
-  });
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    profileImageUrl: string;
+  } | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
-    const savedTheme = window.localStorage?.getItem("theme");
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoadingProfile(true);
+      const data = await authService.getProfile();
+      setUser({
+        name: data.name,
+        email: data.email,
+        profileImageUrl: data.profileImageUrl
+      });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  useEffect(() => {
+    const savedTheme = window.localStorage?.getItem('theme');
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      '(prefers-color-scheme: dark)'
     ).matches;
 
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
       setIsDark(true);
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add('dark');
     } else {
       setIsDark(false);
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -61,22 +80,26 @@ const Dashboard = () => {
     setIsDark(newTheme);
 
     if (newTheme) {
-      document.documentElement.classList.add("dark");
-      window.localStorage?.setItem("theme", "dark");
+      document.documentElement.classList.add('dark');
+      window.localStorage?.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove("dark");
-      window.localStorage?.setItem("theme", "light");
+      document.documentElement.classList.remove('dark');
+      window.localStorage?.setItem('theme', 'light');
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUser({ ...user, avatar: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+  const handleCreateResume = async () => {
+    try {
+      setCreatingResume(true);
+      const newResume = await resumeService.createResume({
+        title: 'Untitled Resume'
+      });
+      navigate(`/create-resume/${newResume._id}`);
+    } catch (error) {
+      console.error('Error creating resume:', error);
+      alert('Failed to create resume. Please try again.');
+    } finally {
+      setCreatingResume(false);
     }
   };
 
@@ -84,72 +107,73 @@ const Dashboard = () => {
     totalResumes: 12,
     templatesOwned: 8,
     subscriptionDaysLeft: 23,
-    viewsThisMonth: 147,
+    viewsThisMonth: 147
   };
 
   const recentResumes = [
     {
       id: 1,
-      title: "Senior Frontend Developer",
-      lastModified: "2 hours ago",
-      template: "Modern Pro",
+      title: 'Senior Frontend Developer',
+      lastModified: '2 hours ago',
+      template: 'Modern Pro',
       views: 45,
-      favorite: true,
+      favorite: true
     },
     {
       id: 2,
-      title: "Product Designer Resume",
-      lastModified: "1 day ago",
-      template: "Creative Edge",
+      title: 'Product Designer Resume',
+      lastModified: '1 day ago',
+      template: 'Creative Edge',
       views: 32,
-      favorite: false,
+      favorite: false
     },
     {
       id: 3,
-      title: "Full Stack Engineer",
-      lastModified: "3 days ago",
-      template: "Classic Elite",
+      title: 'Full Stack Engineer',
+      lastModified: '3 days ago',
+      template: 'Classic Elite',
       views: 28,
-      favorite: true,
+      favorite: true
     },
     {
       id: 4,
-      title: "UX Researcher Position",
-      lastModified: "5 days ago",
-      template: "Minimal Clean",
+      title: 'UX Researcher Position',
+      lastModified: '5 days ago',
+      template: 'Minimal Clean',
       views: 19,
-      favorite: false,
-    },
+      favorite: false
+    }
   ];
 
   const quickActions = [
     {
       icon: <FiPlus className="w-6 h-6" />,
-      title: "Create New Resume",
-      description: "Start from scratch or use a template",
-      color: "from-blue-600 to-indigo-600",
-      action: () => navigate("/create"),
+      title: 'Create New Resume',
+      description: 'Start from scratch or use a template',
+      color: 'from-blue-600 to-indigo-600',
+      action: handleCreateResume,
+      loading: creatingResume
     },
     {
       icon: <FiFileText className="w-6 h-6" />,
-      title: "Browse Templates",
-      description: "Explore our premium templates",
-      color: "from-purple-600 to-pink-600",
-      action: () => navigate("/templates"),
+      title: 'Browse Templates',
+      description: 'Explore our premium templates',
+      color: 'from-purple-600 to-pink-600',
+      action: () => navigate('/templates')
     },
     {
       icon: <FiZap className="w-6 h-6" />,
-      title: "AI Resume Writer",
-      description: "Let AI optimize your content",
-      color: "from-amber-500 to-orange-600",
-      action: () => navigate("/ai-writer"),
-    },
+      title: 'Resumes',
+      description: 'Showing All Resumes',
+      color: 'from-amber-500 to-orange-600',
+      action: () => navigate('/get-resumes')
+    }
   ];
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDark ? "dark bg-[#0D1117]" : "bg-[#F5F7FA]"
+        isDark ? 'dark bg-[#0D1117]' : 'bg-[#F5F7FA]'
       }`}
     >
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/70 dark:bg-[#161B22]/70 border-b border-gray-200 dark:border-gray-700">
@@ -157,7 +181,7 @@ const Dashboard = () => {
           <div className="flex justify-between items-center h-16">
             <div
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
             >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
                 <FiFileText className="w-6 h-6 text-white" />
@@ -184,9 +208,9 @@ const Dashboard = () => {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                 >
-                  {user.avatar ? (
+                  {user?.profileImageUrl ? (
                     <img
-                      src={user.avatar}
+                      src={user.profileImageUrl}
                       alt={user.name}
                       className="w-8 h-8 rounded-full object-cover"
                     />
@@ -196,7 +220,7 @@ const Dashboard = () => {
                     </div>
                   )}
                   <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {user.name}
+                    {loadingProfile ? 'Loading...' : user?.name || 'Profile'}
                   </span>
                 </button>
 
@@ -227,116 +251,22 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      {showProfileModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="glass rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slide-up">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Profile
-              </h2>
-              <button
-                onClick={() => setShowProfileModal(false)}
-                className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-              >
-                <FiX className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </button>
-            </div>
-
-            <div className="flex flex-col items-center mb-6">
-              <div className="relative group">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center border-4 border-gray-200 dark:border-gray-700">
-                    <FiUser className="w-12 h-12 text-white" />
-                  </div>
-                )}
-                <label
-                  htmlFor="avatar-upload"
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-lg"
-                >
-                  <FiCamera className="w-4 h-4 text-white" />
-                  <input
-                    id="avatar-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-4">
-                {user.name}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Member since {user.joinedDate}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="glass rounded-xl p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiMail className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                      Email Address
-                    </p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="glass rounded-xl p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiCreditCard className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                      Current Plan
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user.plan} Plan
-                      </p>
-                      <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold rounded-full">
-                        Active
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              <button className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center space-x-2">
-                <FiEdit className="w-4 h-4" />
-                <span>Edit Profile</span>
-              </button>
-              <button
-                onClick={() => setShowProfileModal(false)}
-                className="w-full px-4 py-3 glass text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Profile
+        isOpen={showProfileModal}
+        onClose={() => {
+          setShowProfileModal(false);
+          fetchUserProfile();
+        }}
+        onEditProfile={() => {
+          console.log('Edit profile clicked');
+        }}
+      />
 
       <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 animate-fade-in">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              Welcome back, {user.name.split(" ")[0]}! 👋
+              Welcome back, {user?.name.split(' ')[0] || 'there'}! 👋
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               Here's what's happening with your resumes today
@@ -426,18 +356,25 @@ const Dashboard = () => {
                 <button
                   key={idx}
                   onClick={action.action}
-                  className="group glass rounded-2xl p-6 text-left hover:shadow-2xl hover:scale-105 transition-all"
+                  disabled={action.loading}
+                  className="group glass rounded-2xl p-6 text-left hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   <div
                     className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
                   >
-                    <div className="text-white">{action.icon}</div>
+                    <div className="text-white">
+                      {action.loading ? (
+                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        action.icon
+                      )}
+                    </div>
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                     {action.title}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {action.description}
+                    {action.loading ? 'Creating resume...' : action.description}
                   </p>
                 </button>
               ))}
@@ -494,7 +431,10 @@ const Dashboard = () => {
                   </div>
 
                   <div className="flex items-center space-x-3">
-                    <button className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center space-x-2">
+                    <button
+                      onClick={() => navigate(`/create-resume/${resume.id}`)}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center space-x-2"
+                    >
                       <FiEdit className="w-4 h-4" />
                       <span>Edit</span>
                     </button>
@@ -524,10 +464,11 @@ const Dashboard = () => {
                   Create your first professional resume in minutes
                 </p>
                 <button
-                  onClick={() => navigate("/create")}
-                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all"
+                  onClick={handleCreateResume}
+                  disabled={creatingResume}
+                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  Create Your First Resume
+                  {creatingResume ? 'Creating...' : 'Create Your First Resume'}
                 </button>
               </div>
             )}

@@ -1,39 +1,35 @@
-// src/routes/AppRoutes.tsx
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { ProtectedRoute } from "./ProtectedRoute";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { ProtectedRoute } from './ProtectedRoute';
+import { Home } from '@/components/Auth/Home';
 
-// Auth Pages
-import Login from "../pages/Auth/Login";
-import Register from "../pages/Auth/Register";
-import NotFound from "@/pages/NotFound";
-import { Loader } from "../components/Loader/Loader";
-import Dashboard from "@/pages/Dashboard/Dashboard";
-// import ForgotPassword from '../pages/Auth/ForgotPassword';
-
-// Resume Pages (create these later)
-// const ResumeTemplates = React.lazy(() => import('../pages/Resume/ResumeTemplates'));
-// const CreateResume = React.lazy(() => import('../pages/Resume/CreateResume'));
-// const MyResumes = React.lazy(() => import('../pages/Resume/MyResumes'));
-
-// Other Pages
-const Landing = React.lazy(() => import("../pages/Landing/Landing"));
-// const NotFound = React.lazy(() => import('../pages/NotFound'));
+import Login from '../pages/Auth/Login';
+import Register from '../pages/Auth/Register';
+import VerificationPending from '../pages/Auth/VerificationPending';
+import VerifyEmail from '../pages/Auth/VerifyEmail';
+import NotFound from '@/pages/NotFound';
+import { Loader } from '../components/Loader/Loader';
+import Dashboard from '@/pages/Dashboard/Dashboard';
+import ResumeBuilder from '@/pages/Resume/ResumeBuilder';
+import AllResumes from '@/pages/Resume/AllResumes';
 
 export const AppRoutes: React.FC = () => {
   return (
     <React.Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-black`-600">
-          <Loader size="lg" variant={"default"} text={"ResumeAI"} />
+        <div className="min-h-screen flex items-center justify-center bg-black-600">
+          <Loader size="lg" variant={'default'} text={'ResumeAI'} />
         </div>
       }
     >
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Home />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verification-pending" element={<VerificationPending />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+
         <Route
           path="/dashboard"
           element={
@@ -42,35 +38,31 @@ export const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
-
-        {/* Protected Routes */}
-        {/* <Route
-          path="/resume/templates"
+        <Route
+          path="/create-resume"
           element={
             <ProtectedRoute>
-              <ResumeTemplates />
+              <ResumeBuilder />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/resume/create"
+          path="/create-resume/:id"
           element={
             <ProtectedRoute>
-              <CreateResume />
+              <ResumeBuilder />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/resume/my-resumes"
+          path="/get-resumes"
           element={
             <ProtectedRoute>
-              <MyResumes />
+              <AllResumes />
             </ProtectedRoute>
           }
-        /> */}
+        />
 
-        {/* 404 Page */}
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FiSun,
   FiMoon,
@@ -8,25 +8,25 @@ import {
   FiEdit,
   FiZap,
   FiCheck,
-  FiArrowRight,
-} from "react-icons/fi";
+  FiArrowRight
+} from 'react-icons/fi';
 
 const Landing = () => {
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const savedTheme = window.localStorage?.getItem("theme");
+    const savedTheme = window.localStorage?.getItem('theme');
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      '(prefers-color-scheme: dark)'
     ).matches;
 
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
       setIsDark(true);
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add('dark');
     } else {
       setIsDark(false);
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -35,117 +35,118 @@ const Landing = () => {
     setIsDark(newTheme);
 
     if (newTheme) {
-      document.documentElement.classList.add("dark");
-      window.localStorage?.setItem("theme", "dark");
+      document.documentElement.classList.add('dark');
+      window.localStorage?.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove("dark");
-      window.localStorage?.setItem("theme", "light");
+      document.documentElement.classList.remove('dark');
+      window.localStorage?.setItem('theme', 'light');
     }
   };
 
   const features = [
     {
       icon: <FiEdit className="w-8 h-8" />,
-      title: "Easy to Use",
-      description: "Intuitive interface that makes resume building simple.",
+      title: 'Easy to Use',
+      description: 'Intuitive interface that makes resume building simple.'
     },
     {
       icon: <FiFileText className="w-8 h-8" />,
-      title: "Professional Templates",
-      description: "Choose from ATS-friendly templates crafted by experts.",
+      title: 'Professional Templates',
+      description: 'Choose from ATS-friendly templates crafted by experts.'
     },
     {
       icon: <FiDownload className="w-8 h-8" />,
-      title: "Export Anywhere",
-      description: "Download in PDF, DOCX, or share with a custom link.",
+      title: 'Export Anywhere',
+      description: 'Download in PDF, DOCX, or share with a custom link.'
     },
     {
       icon: <FiZap className="w-8 h-8" />,
-      title: "AI-Powered",
-      description: "Smart suggestions and optimization with AI.",
-    },
+      title: 'AI-Powered',
+      description: 'Smart suggestions and optimization with AI.'
+    }
   ];
 
   const templates = [
     {
       id: 1,
-      name: "Modern Pro",
-      color: "from-blue-600 to-indigo-600",
-      images: "/Images/Resume/resume_template1.svg",
+      name: 'Modern Pro',
+      color: 'from-blue-600 to-indigo-600',
+      images: '/Images/Resume/resume_template1.svg'
     },
     {
       id: 2,
-      name: "Classic Elite",
-      color: "from-indigo-500 to-blue-600",
-      images: "/Images/Resume/resume_template1.svg",
+      name: 'Classic Elite',
+      color: 'from-indigo-500 to-blue-600',
+      images: '/Images/Resume/resume_template1.svg'
     },
     {
       id: 3,
-      name: "Creative Edge",
-      color: "from-blue-500 to-purple-600",
-      images: "/Images/Resume/resume_template1.svg",
+      name: 'Creative Edge',
+      color: 'from-blue-500 to-purple-600',
+      images: '/Images/Resume/resume_template1.svg'
     },
     {
       id: 4,
-      name: "Minimal Clean",
-      color: "from-gray-600 to-gray-800",
-      images: "/Images/Resume/resume_template1.svg",
-    },
+      name: 'Minimal Clean',
+      color: 'from-gray-600 to-gray-800',
+      images: '/Images/Resume/resume_template1.svg'
+    }
   ];
 
   const pricingPlans = [
     {
-      name: "Free",
-      price: "₹0",
-      period: "forever",
-      features: ["1 Resume", "Basic Templates", "PDF Export", "Email Support"],
-      cta: "Get Started",
-      popular: false,
+      name: 'Free',
+      price: '₹0',
+      period: 'forever',
+      features: ['1 Resume', 'Basic Templates', 'PDF Export', 'Email Support'],
+      cta: 'Get Started',
+      popular: false
     },
     {
-      name: "Pro",
-      price: "₹199",
-      period: "/month",
+      name: 'Pro',
+      price: '₹199',
+      period: '/month',
       features: [
-        "Unlimited Resumes",
-        "All Premium Templates",
-        "PDF & DOCX Export",
-        "AI Content Writer",
-        "Priority Support",
-        "Custom Domain",
+        'Unlimited Resumes',
+        'All Premium Templates',
+        'PDF & DOCX Export',
+        'AI Content Writer',
+        'Priority Support',
+        'Custom Domain'
       ],
-      cta: "Start Free Trial",
-      popular: true,
+      cta: 'Start Free Trial',
+      popular: true
     },
     {
-      name: "Enterprise",
-      price: "₹3999",
-      period: "/month",
+      name: 'Enterprise',
+      price: '₹3999',
+      period: '/month',
       features: [
-        "Everything in Pro",
-        "Team Collaboration",
-        "Custom Branding",
-        "API Access",
-        "Dedicated Manager",
-        "SLA Support",
+        'Everything in Pro',
+        'Team Collaboration',
+        'Custom Branding',
+        'API Access',
+        'Dedicated Manager',
+        'SLA Support'
       ],
-      cta: "Contact Sales",
-      popular: false,
-    },
+      cta: 'Contact Sales',
+      popular: false
+    }
   ];
 
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDark ? "dark bg-[#0D1117]" : "bg-[#F5F7FA]"
+        isDark ? 'dark bg-[#0D1117]' : 'bg-[#F5F7FA]'
       }`}
     >
-      {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/70 dark:bg-[#161B22]/70 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={() => navigate('/')}
+            >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
                 <FiFileText className="w-6 h-6 text-white" />
               </div>
@@ -154,7 +155,6 @@ const Landing = () => {
               </span>
             </div>
 
-            {/* Right */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={toggleTheme}
@@ -168,14 +168,14 @@ const Landing = () => {
               </button>
 
               <button
-                onClick={() => navigate("/login")}
+                onClick={() => navigate('/login')}
                 className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-indigo-400 transition-colors"
               >
                 Login
               </button>
 
               <button
-                onClick={() => navigate("/register")}
+                onClick={() => navigate('/register')}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all"
               >
                 Sign Up
@@ -185,7 +185,6 @@ const Landing = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-8">
           <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass shadow-xl">
@@ -212,7 +211,7 @@ const Landing = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate('/register')}
               className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center space-x-2"
             >
               <span>Start Building Free</span>
@@ -226,7 +225,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-center text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-16">
@@ -256,7 +254,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Templates Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-[#161B22]">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-16">
@@ -296,7 +293,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">
@@ -310,8 +306,8 @@ const Landing = () => {
               key={idx}
               className={`relative rounded-2xl p-8 transition-all hover:scale-105 ${
                 plan.popular
-                  ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105"
-                  : "glass"
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105'
+                  : 'glass'
               }`}
             >
               {plan.popular && (
@@ -324,7 +320,7 @@ const Landing = () => {
 
               <h3
                 className={`text-2xl font-bold mb-2 ${
-                  plan.popular ? "text-white" : "text-gray-900 dark:text-white"
+                  plan.popular ? 'text-white' : 'text-gray-900 dark:text-white'
                 }`}
               >
                 {plan.name}
@@ -334,8 +330,8 @@ const Landing = () => {
                 <span
                   className={`text-5xl font-bold ${
                     plan.popular
-                      ? "text-white"
-                      : "text-gray-900 dark:text-white"
+                      ? 'text-white'
+                      : 'text-gray-900 dark:text-white'
                   }`}
                 >
                   {plan.price}
@@ -343,8 +339,8 @@ const Landing = () => {
                 <span
                   className={`ml-2 ${
                     plan.popular
-                      ? "text-white/80"
-                      : "text-gray-600 dark:text-gray-400"
+                      ? 'text-white/80'
+                      : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   {plan.period}
@@ -357,15 +353,15 @@ const Landing = () => {
                     <FiCheck
                       className={`w-5 h-5 flex-shrink-0 ${
                         plan.popular
-                          ? "text-white"
-                          : "text-blue-600 dark:text-indigo-400"
+                          ? 'text-white'
+                          : 'text-blue-600 dark:text-indigo-400'
                       }`}
                     />
                     <span
                       className={
                         plan.popular
-                          ? "text-white"
-                          : "text-gray-700 dark:text-gray-300"
+                          ? 'text-white'
+                          : 'text-gray-700 dark:text-gray-300'
                       }
                     >
                       {feature}
@@ -375,11 +371,11 @@ const Landing = () => {
               </ul>
 
               <button
-                onClick={() => navigate("/register")}
+                onClick={() => navigate('/register')}
                 className={`w-full py-3 rounded-xl font-semibold transition-all ${
                   plan.popular
-                    ? "bg-white text-blue-600 hover:bg-gray-100"
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg"
+                    ? 'bg-white text-blue-600 hover:bg-gray-100'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg'
                 }`}
               >
                 {plan.cta}
@@ -389,7 +385,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="backdrop-blur-md bg-white/70 dark:bg-[#161B22]/70 border-t border-gray-200 dark:border-gray-700 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -407,14 +402,14 @@ const Landing = () => {
               </p>
             </div>
 
-            {["Product", "Company", "Support"].map((section, idx) => (
+            {['Product', 'Company', 'Support'].map((section, idx) => (
               <div key={idx}>
                 <h4 className="font-bold text-gray-900 dark:text-white mb-4">
                   {section}
                 </h4>
 
                 <ul className="space-y-2">
-                  {["Link 1", "Link 2", "Link 3", "Link 4"].map(
+                  {['Link 1', 'Link 2', 'Link 3', 'Link 4'].map(
                     (link, linkIdx) => (
                       <li key={linkIdx}>
                         <a

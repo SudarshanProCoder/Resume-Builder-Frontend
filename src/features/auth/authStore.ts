@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   logout: () => {
-    storage.clearAll();
+    storage.removeToken();
     set({ user: null, token: null, isAuthenticated: false, error: null });
   },
 
@@ -42,5 +42,5 @@ export const useAuthStore = create<AuthStore>((set) => ({
     if (token && user) {
       set({ user, token, isAuthenticated: true });
     }
-  },
+  }
 }));

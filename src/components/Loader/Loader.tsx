@@ -7,28 +7,26 @@ interface LoaderProps {
   variant?: 'default' | 'building' | 'processing';
 }
 
-export const Loader: React.FC<LoaderProps> = ({ 
-  size = 'md', 
+export const Loader: React.FC<LoaderProps> = ({
+  size = 'md',
   text,
-  variant = 'default' 
+  variant = 'default'
 }) => {
   const sizeClasses = {
     sm: 'w-16 h-16',
     md: 'w-24 h-24',
-    lg: 'w-32 h-32',
+    lg: 'w-32 h-32'
   };
 
   const iconSizes = {
     sm: 'w-6 h-6',
     md: 'w-10 h-10',
-    lg: 'w-14 h-14',
+    lg: 'w-14 h-14'
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-8">
-      {/* Main Loader Animation */}
       <div className="relative">
-        {/* Rotating Ring */}
         <div className={`${sizeClasses[size]} relative`}>
           <svg className="w-full h-full animate-spin" viewBox="0 0 100 100">
             <circle
@@ -54,13 +52,16 @@ export const Loader: React.FC<LoaderProps> = ({
               }}
             />
           </svg>
-          
-          {/* Center Icon */}
+
           <div className="absolute inset-0 flex items-center justify-center">
             {variant === 'building' ? (
-              <FileText className={`${iconSizes[size]} text-blue-600 animate-pulse`} />
+              <FileText
+                className={`${iconSizes[size]} text-blue-600 animate-pulse`}
+              />
             ) : variant === 'processing' ? (
-              <Sparkles className={`${iconSizes[size]} text-blue-600 animate-pulse`} />
+              <Sparkles
+                className={`${iconSizes[size]} text-blue-600 animate-pulse`}
+              />
             ) : (
               <div className="relative">
                 <FileText className={`${iconSizes[size]} text-blue-600`} />
@@ -72,31 +73,43 @@ export const Loader: React.FC<LoaderProps> = ({
           </div>
         </div>
 
-        {/* Orbiting Dots */}
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '3s' }}>
+        <div
+          className="absolute inset-0 animate-spin"
+          style={{ animationDuration: '3s' }}
+        >
           <div className="absolute top-0 left-1/2 w-2 h-2 bg-blue-500 rounded-full -translate-x-1/2"></div>
         </div>
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '3s', animationDelay: '1s' }}>
+        <div
+          className="absolute inset-0 animate-spin"
+          style={{ animationDuration: '3s', animationDelay: '1s' }}
+        >
           <div className="absolute top-0 left-1/2 w-2 h-2 bg-indigo-500 rounded-full -translate-x-1/2"></div>
         </div>
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: '3s', animationDelay: '2s' }}>
+        <div
+          className="absolute inset-0 animate-spin"
+          style={{ animationDuration: '3s', animationDelay: '2s' }}
+        >
           <div className="absolute top-0 left-1/2 w-2 h-2 bg-purple-500 rounded-full -translate-x-1/2"></div>
         </div>
       </div>
 
-      {/* Loading Text */}
       {text && (
         <div className="text-center space-y-2">
           <p className="text-base font-medium text-gray-700">{text}</p>
           <div className="flex items-center justify-center gap-1">
             <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></span>
-            <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-            <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+            <span
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0.1s' }}
+            ></span>
+            <span
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0.2s' }}
+            ></span>
           </div>
         </div>
       )}
 
-      {/* CSS Animations */}
       <style>{`
         @keyframes dash {
           0% {
@@ -113,8 +126,3 @@ export const Loader: React.FC<LoaderProps> = ({
     </div>
   );
 };
-
-
-// how to use this Component example
-// const [variant, setVariant] = React.useState<'default' | 'building' | 'processing'>('default');
-

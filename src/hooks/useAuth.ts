@@ -1,16 +1,10 @@
-import { useState } from "react";
-import { authService } from "../services/authService";
-import {
-  getToken,
-  setToken,
-  removeToken,
-  setUser,
-  getUser,
-} from "../utils/storage";
+import { useState } from 'react';
+import { authService } from '../services/authService';
+import { storage } from '../utils/storage';
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!getToken());
-  const [user, setAuthUser] = useState(getUser());
+  const [isAuthenticated, setIsAuthenticated] = useState(!!storage.getToken());
+  const [user, setAuthUser] = useState(storage.getUser());
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
@@ -18,21 +12,25 @@ export const useAuth = () => {
     try {
       const response = await authService.login({ email, password });
 
-      if (!response.verificationToken) {
-        throw new Error("Token not received");
+      if (!response.emailVerified) {
+        throw new Error('EMAIL_NOT_VERIFIED');
       }
 
-      setToken(response.verificationToken);
+      if (!response.verificationToken) {
+        throw new Error('Token not received');
+      }
+
+      storage.setToken(response.verificationToken);
 
       const userData = {
         id: response._id,
         name: response.name,
         email: response.email,
         profileImageUrl: response.profileImageUrl,
-        subscriptionPlan: response.subscriptionPlan,
+        subscriptionPlan: response.subscriptionPlan
       };
 
-      setUser(userData);
+      storage.setUser(userData);
       setAuthUser(userData);
       setIsAuthenticated(true);
     } finally {
@@ -41,11 +39,11 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    removeToken();
+    storage.removeToken();
     setIsAuthenticated(false);
     setAuthUser(null);
 
-    window.location.href = "/login";
+    window.location.href = '/login';
   };
 
   const register = async (data: {
@@ -63,12 +61,14 @@ export const useAuth = () => {
         profileImageUrl = uploadRes.imageUrl;
       }
 
-      await authService.register({
+      const response = await authService.register({
         name: data.name,
         email: data.email,
         password: data.password,
-        profileImageUrl,
+        profileImageUrl
       });
+
+      return response;
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +80,6 @@ export const useAuth = () => {
     user,
     login,
     logout,
-    register,
+    register
   };
 };
