@@ -15,14 +15,18 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = storage.getToken();
-    if (token) {
+
+    if (
+      token &&
+      !config.url?.includes('/auth/login') &&
+      !config.url?.includes('/auth/register')
+    ) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
@@ -30,7 +34,10 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const url = error.config?.url;
+
+    if (status === 401 && !url?.includes('/auth/login')) {
       storage.removeToken();
       window.location.href = '/login';
     }
